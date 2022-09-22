@@ -4,6 +4,17 @@ import * as Koa from 'koa';
 declare function KoaProxies(path: string | RegExp | (string | RegExp)[], options: KoaProxies.IKoaProxiesOptions): Koa.Middleware;
 
 declare namespace KoaProxies {
+  interface IKoaProxiesExtendRequest extends IncomingMessage {
+    oldPath: string,
+  }
+
+  interface IKoaProxiesExtendProxyRequest extends ClientRequest {
+  }
+
+  interface IKoaProxiesExtendProxyResponse extends IncomingMessage {
+    req: IKoaProxiesExtendProxyRequest,
+  }
+
   interface IBaseKoaProxiesOptions {
     target: string;
     changeOrigin?: boolean;
@@ -12,9 +23,9 @@ declare namespace KoaProxies {
     headers?: {[key: string]: string};
     rewrite?: (path: string) => string;
     events?: {
-      error?: (error: any, req: IncomingMessage, res: ServerResponse) => void;
-      proxyReq?: (proxyReq: ClientRequest, req: IncomingMessage, res: ServerResponse) => void;
-      proxyRes?: (proxyRes: IncomingMessage, req: IncomingMessage, res: ServerResponse) => void;
+      error?: (error: any, req: IKoaProxiesExtendRequest, res: ServerResponse) => void;
+      proxyReq?: (proxyReq: IKoaProxiesExtendProxyRequest, req: IKoaProxiesExtendRequest, res: ServerResponse) => void;
+      proxyRes?: (proxyRes: IKoaProxiesExtendProxyResponse, req: IKoaProxiesExtendRequest, res: ServerResponse) => void;
     }
   }
 
